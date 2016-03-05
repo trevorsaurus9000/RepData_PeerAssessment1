@@ -22,31 +22,48 @@ output:
 ```
 
 
-## What is mean total number of steps taken per day?
+## After removing rows with missing data, what is mean total number of steps taken per day?
 
-```{r echo=TRUE}
+A historgram showing mean steps per day:
+```{r echo=true}
      activityDataNoNAs <- na.omit(activityData)
-     stepsPerDay <- aggregate(activityDataNoNAs$steps, by=list(date = activityDataNoNAs$date), FUN=sum)
-     totalStepsPerDay <- sum(stepsPerDay$x)
-     medianStepsPerDay <- median(stepsPerDay$x)
-     meanStepsPerDay <- mean(stepsPerDay$x)
+     totalStepsPerDay <- aggregate(activityDataNoNAs$steps, by=list(date = activityDataNoNAs$date), FUN=sum)
+     
+     png(file = "./meanStepsPerDay.png", width = 400, height = 400)
+     hist(totalStepsPerDay$x, right = FALSE, col="royalblue4", main = "Steps Taken Per Day", xlab = "Steps")
+     dev.off()
+```
+![histStepsPerDay](https://github.com/trevorsaurus9000/RepData_PeerAssessment1/blob/master/meanStepsPerDay.png)
+
+It looks like our mean steps per day is: `10766.19`.
+```{r echo=TRUE}
+     meanStepsPerDay <- mean(totalStepsPerDay$x)
 ```
 
-After removing rows with missing data, our mean steps per day is: `10766.19`.
+And our median steps per day is: `10765`.
+```{r echo=TRUE}
+     medianStepsPerDay <- median(totalStepsPerDay$x)
+```
 
-Historgram of mean steps per day:
+## After removing rows with missing data, what is the average daily activity pattern?
 
-```{r echo=true}
-     png(file = "./meanStepsPerDay.png", width = 400, height = 400)
-     hist(stepsPerDay$x, right = FALSE, col="royalblue4", main = "Steps Taken Per Day", xlab = "Steps")
+A plot showing mean steps per interval:
+```{r echo=TRUE}
+     averageStepsPerInterval <- aggregate(activityDataNoNAs$steps, by=list(interval = activityDataNoNAs$interval), FUN=mean)
+     
+     png(file = "./averageStepsPerInterval.png", width = 400, height = 400)
+     plot(averageStepsPerInterval$interval,averageStepsPerInterval$x, type ="l", col="royalblue4",
+          main = "Average Steps Per Interval", xlab = "5 Minute Interval", ylab = "Average Steps Taken")
      dev.off()
 ```
 
-![histogram](https://github.com/trevorsaurus9000/RepData_PeerAssessment1/blob/master/meanStepsPerDay.png)
+![plotStepsPerInterval](https://github.com/trevorsaurus9000/RepData_PeerAssessment1/blob/master/averageStepsPerInterval.png)
 
-## What is the average daily activity pattern?
-
-
+The interval with the highest average steps is: `835`
+```{r echo=TRUE}
+     averageStepsPerInterval <- averageStepsPerInterval[with(averageStepsPerInterval, order(-x)),]
+     intervalMax <- averageStepsPerInterval[1,1]
+```
 
 ## Imputing missing values
 

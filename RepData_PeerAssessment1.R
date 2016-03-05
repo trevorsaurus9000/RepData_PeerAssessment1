@@ -18,12 +18,27 @@ RepData_PeerAssessment1 <- function () {
      
      ## Ignoring rows with missing data, what is mean total number of steps taken per day?
      activityDataNoNAs <- na.omit(activityData)
-     stepsPerDay <- aggregate(activityDataNoNAs$steps, by=list(date = activityDataNoNAs$date), FUN=sum)
-     totalStepsPerDay <- sum(stepsPerDay$x)
-     medianStepsPerDay <- median(stepsPerDay$x)
-     meanStepsPerDay <- mean(stepsPerDay$x)
+     totalStepsPerDay <- aggregate(activityDataNoNAs$steps, by=list(date = activityDataNoNAs$date), FUN=sum)
 
      png(file = "./meanStepsPerDay.png", width = 400, height = 400)
-     hist(stepsPerDay$x, right = FALSE, col="royalblue4", main = "Steps Taken Per Day", xlab = "Steps")
+     hist(totalStepsPerDay$x, right = FALSE, col="royalblue4", main = "Average Total Steps Per Day", xlab = "Total Steps Taken")
      dev.off()
+     
+     ## Calculate and report the mean and median of the total number of steps taken per day
+     meanStepsPerDay <- mean(totalStepsPerDay$x)
+     medianStepsPerDay <- median(totalStepsPerDay$x)
+     
+     ## Ignoring rows with missing data, what is the average daily activity pattern?
+     averageStepsPerInterval <- aggregate(activityDataNoNAs$steps, by=list(interval = activityDataNoNAs$interval), FUN=mean)
+     
+     png(file = "./averageStepsPerInterval.png", width = 400, height = 400)
+     plot(averageStepsPerInterval$interval,averageStepsPerInterval$x, type ="l", col="royalblue4",
+          main = "Average Steps Per Interval", xlab = "5 Minute Interval", ylab = "Average Steps Taken")
+     dev.off()
+     
+     ##Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+     averageStepsPerInterval <- averageStepsPerInterval[with(averageStepsPerInterval, order(-x)),]
+     intervalMax <- averageStepsPerInterval[1,1]
+     
+     
 }
