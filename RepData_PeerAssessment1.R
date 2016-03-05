@@ -1,5 +1,6 @@
 RepData_PeerAssessment1 <- function () {
      
+     library(knitr)
      setwd("C:/THARRIS/Coursera/Reproducible Data")
      
      ## Unpack and load our data set
@@ -22,7 +23,7 @@ RepData_PeerAssessment1 <- function () {
      medianStepsPerDay <- median(stepsPerDay$x)
      meanStepsPerDay <- mean(stepsPerDay$x)
 
-     png(file = "./meanStepsPerDay.png", width = 480, height = 480)
+     png(file = "./meanStepsPerDay.png", width = 400, height = 400)
      hist(stepsPerDay$x, right = FALSE, col="royalblue4", main = "Steps Taken Per Day", xlab = "Steps")
      dev.off()
 }

@@ -24,8 +24,6 @@ output:
 
 ## What is mean total number of steps taken per day?
 
-After removing rows with missing data, our mean steps per day is `10766.19`.
-
 ```{r echo=TRUE}
      activityDataNoNAs <- na.omit(activityData)
      stepsPerDay <- aggregate(activityDataNoNAs$steps, by=list(date = activityDataNoNAs$date), FUN=sum)
@@ -34,14 +32,17 @@ After removing rows with missing data, our mean steps per day is `10766.19`.
      meanStepsPerDay <- mean(stepsPerDay$x)
 ```
 
-Historgram of mean steps per day
-![histogram](https://github.com/trevorsaurus9000/RepData_PeerAssessment1/blob/master/meanStepsPerDay.png)
+After removing rows with missing data, our mean steps per day is: `10766.19`.
+
+Historgram of mean steps per day:
 
 ```{r echo=true}
-     png(file = "./meanStepsPerDay.png", width = 480, height = 480)
+     png(file = "./meanStepsPerDay.png", width = 400, height = 400)
      hist(stepsPerDay$x, right = FALSE, col="royalblue4", main = "Steps Taken Per Day", xlab = "Steps")
      dev.off()
 ```
+
+![histogram](https://github.com/trevorsaurus9000/RepData_PeerAssessment1/blob/master/meanStepsPerDay.png)
 
 ## What is the average daily activity pattern?
 
