@@ -24,7 +24,7 @@ output:
 
 ## After removing rows with missing data, what is mean total number of steps taken per day?
 
-A historgram showing mean steps per day:
+Historgram showing mean steps per day:
 ```{r echo=true}
      activityDataNoNAs <- na.omit(activityData)
      totalStepsPerDay <- aggregate(activityDataNoNAs$steps, by=list(date = activityDataNoNAs$date), FUN=sum)
@@ -35,19 +35,19 @@ A historgram showing mean steps per day:
 ```
 ![histStepsPerDay](https://github.com/trevorsaurus9000/RepData_PeerAssessment1/blob/master/meanStepsPerDay.png)
 
-It looks like our mean steps per day is: `10766.19`.
+Mean steps per day: `10766.19`.
 ```{r echo=TRUE}
      meanStepsPerDay <- mean(totalStepsPerDay$x)
 ```
 
-And our median steps per day is: `10765`.
+Median steps per day: `10765`.
 ```{r echo=TRUE}
      medianStepsPerDay <- median(totalStepsPerDay$x)
 ```
 
 ## After removing rows with missing data, what is the average daily activity pattern?
 
-A plot showing mean steps per interval:
+Plot showing mean steps per interval:
 ```{r echo=TRUE}
      averageStepsPerInterval <- aggregate(activityDataNoNAs$steps, by=list(interval = activityDataNoNAs$interval), FUN=mean)
      
@@ -59,7 +59,7 @@ A plot showing mean steps per interval:
 
 ![plotStepsPerInterval](https://github.com/trevorsaurus9000/RepData_PeerAssessment1/blob/master/averageStepsPerInterval.png)
 
-The interval with the highest average steps is: `835`
+Interval with the highest average steps: `835`.
 ```{r echo=TRUE}
      averageStepsPerInterval <- averageStepsPerInterval[with(averageStepsPerInterval, order(-x)),]
      intervalMax <- averageStepsPerInterval[1,1]
@@ -67,6 +67,44 @@ The interval with the highest average steps is: `835`
 
 ## Imputing missing values
 
+Total observations missing steps (value = NA): `2304`
+```{r echo=TRUE}
+     totalMissingValues <- nrow(activityData) - sum(complete.cases(activityData$steps))
+```
 
+Historgram showing mean steps per day, after NAs were populated using interval means:
+```{r echo=TRUE}
+     activityDataFixed <- activityData
+     i <- 1
+     for (i in 1:nrow(activityDataFixed))
+     {
+          if(is.na(activityDataFixed[i,3]))
+          {
+               targetValue <- paste0(paste0("^",activityDataFixed[i,2]),"$")
+               targetRowNumber <- which(grepl(targetValue,averageStepsPerInterval$interval))
+               activityDataFixed[i,3] <- averageStepsPerInterval[targetRowNumber,2]
+          }
+     }
+     totalStepsPerDayFixed <- aggregate(activityDataFixed$steps, by=list(date = activityDataFixed$date), FUN=sum)
+     
+     png(file = "./meanStepsPerDayNoNAs.png", width = 400, height = 400)
+     hist(totalStepsPerDayFixed$x, right = FALSE, col="royalblue4",  xlab = "Total Steps Taken",
+          main = "Average Total Steps Per Day\nNAs populated using interval means")
+     dev.off()
+```
+
+![histStepsPerDayFixed](https://github.com/trevorsaurus9000/RepData_PeerAssessment1/blob/master/meanStepsPerDayNoNAs.png)
+
+Mean steps per day: `10766.19`.
+```{r echo=TRUE}
+     meanStepsPerDayFixed <- mean(totalStepsPerDayFixed$x)
+```
+
+Median steps per day: `10766.19`.
+```{r echo=TRUE}
+     medianStepsPerDayFixed <- median(totalStepsPerDayFixed$x)
+```
+
+Note that after fixing the rows with missing values (populating NAs with interval averages), the mean did not change, but the median did (median now equals mean).
 
 ## Are there differences in activity patterns between weekdays and weekends?

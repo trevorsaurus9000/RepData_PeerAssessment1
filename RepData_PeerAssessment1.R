@@ -1,6 +1,5 @@
 RepData_PeerAssessment1 <- function () {
      
-     library(knitr)
      setwd("C:/THARRIS/Coursera/Reproducible Data")
      
      ## Unpack and load our data set
@@ -36,9 +35,34 @@ RepData_PeerAssessment1 <- function () {
           main = "Average Steps Per Interval", xlab = "5 Minute Interval", ylab = "Average Steps Taken")
      dev.off()
      
-     ##Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+     ## Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
      averageStepsPerInterval <- averageStepsPerInterval[with(averageStepsPerInterval, order(-x)),]
      intervalMax <- averageStepsPerInterval[1,1]
      
+     ## Imputing missing values
+     totalMissingValues <- nrow(activityData) - sum(complete.cases(activityData$steps))
      
+     ## For every row missing a value, use that row's interval to extract the average steps for that interval from our
+     ##    averageStepsPerInterval data set
+     activityDataFixed <- activityData
+     i <- 1
+     for (i in 1:nrow(activityDataFixed))
+     {
+          if(is.na(activityDataFixed[i,3]))
+          {
+               targetValue <- paste0(paste0("^",activityDataFixed[i,2]),"$")
+               targetRowNumber <- which(grepl(targetValue,averageStepsPerInterval$interval))
+               activityDataFixed[i,3] <- averageStepsPerInterval[targetRowNumber,2]
+          }
+     }
+     totalStepsPerDayFixed <- aggregate(activityDataFixed$steps, by=list(date = activityDataFixed$date), FUN=sum)
+     
+     png(file = "./meanStepsPerDayNoNAs.png", width = 400, height = 400)
+     hist(totalStepsPerDayFixed$x, right = FALSE, col="royalblue4",  xlab = "Total Steps Taken",
+          main = "Average Total Steps Per Day\nNAs populated using interval means")
+     dev.off()
+     
+     ## Calculate and report the mean and median of the total number of steps taken per day
+     meanStepsPerDayFixed <- mean(totalStepsPerDayFixed$x)
+     medianStepsPerDayFixed <- median(totalStepsPerDayFixed$x)
 }
