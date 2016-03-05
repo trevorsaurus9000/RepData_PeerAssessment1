@@ -35,7 +35,7 @@ After removing rows with missing data, our mean steps per day is `10766.19`.
 ```
 
 Historgram of mean steps per day
-(https://github.com/trevorsaurus9000/RepData_PeerAssessment1/blob/master/meanStepsPerDay.png)
+![histogram](https://github.com/trevorsaurus9000/RepData_PeerAssessment1/blob/master/meanStepsPerDay.png)
 
 ```{r echo=true}
      png(file = "./meanStepsPerDay.png", width = 480, height = 480)
