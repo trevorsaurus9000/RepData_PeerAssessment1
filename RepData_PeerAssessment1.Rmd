@@ -108,3 +108,37 @@ Median steps per day: `10766.19`.
 Note that after fixing the rows with missing values (populating NAs with interval averages), the mean did not change, but the median did (median now equals mean).
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Plot showing mean steps per interval, comparring weekend behavior vs weekday:
+```{r echo=TRUE}
+          ##Create a new variable showing weekday vs weekend
+     weekendDays <- c("Saturday","Sunday")
+     activityWeekday <- as.factor(weekdays(as.Date(activityDataFixed[,1],format = "%m/%d/%Y"))) ## Creates a vector of weekdays
+     weekend <- activityWeekday %in% weekendDays  ## TRUE if the weekday was Saturday or Sunday
+     weekend <- replace(weekend, weekend==TRUE, "Weekend")  ##Replaces TRUE/FALSE with "Weekend"/"Weekday"
+     weekend <- replace(weekend, weekend==FALSE, "Weekday")
+     activityDataFixed <- cbind(activityDataFixed,weekend)
+     
+     ##Create a tidy data set that is easy to plot
+     ##NOTE!  There's surely a more efficient way to create this tidy data set, but I'm pressed for time...
+     weekendSubset <- activityDataFixed[activityDataFixed$weekend == "Weekend",]
+     weekdaySubset <- activityDataFixed[activityDataFixed$weekend == "Weekday",]
+     
+     totalStepsPerWeekendFixed <- aggregate(weekendSubset$steps, by=list(interval = weekendSubset$interval), FUN=mean)
+     totalStepsPerWeekdayFixed <- aggregate(weekdaySubset$steps, by=list(interval = weekdaySubset$interval), FUN=mean)
+     
+     totalStepsPerWeekendFixed <- cbind(totalStepsPerWeekendFixed,rep(c("Weekend"),each=nrow(totalStepsPerWeekendFixed)))
+     totalStepsPerWeekdayFixed <- cbind(totalStepsPerWeekdayFixed,rep(c("Weekday"),each=nrow(totalStepsPerWeekdayFixed)))
+     
+     names(totalStepsPerWeekendFixed) <- c("interval","steps","weekend")
+     names(totalStepsPerWeekdayFixed) <- c("interval","steps","weekend")
+     
+     tidyWeekendComparrisonSet <- rbind(totalStepsPerWeekendFixed,totalStepsPerWeekdayFixed)
+     
+     png(file = "./weekendComparrison.png", width = 600, height = 600)
+     xyplot(steps ~ interval | weekend, data = tidyWeekendComparrisonSet, layout = c(1,2),
+            type = "l", xlab = "Interval", ylab = "Number of steps")
+     dev.off()
+```
+
+![weekendComparrison](https://github.com/trevorsaurus9000/RepData_PeerAssessment1/blob/master/weekendComparrison.png)
