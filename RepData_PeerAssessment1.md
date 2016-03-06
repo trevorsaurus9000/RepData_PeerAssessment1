@@ -2,7 +2,8 @@
 # Reproducible Research: Peer Assessment 1
 
 ## Loading and preprocessing the data
-```{r, echo=TRUE}
+
+```r
      library(lattice)
      setwd("C:/THARRIS/Coursera/Reproducible Data")
      
@@ -23,51 +24,78 @@
 ## After removing rows with missing data, what is mean total number of steps taken per day?
 
 ### Create a historgram showing mean steps per day:
-```{r, echo=TRUE}
+
+```r
      activityDataNoNAs <- na.omit(activityData)
      totalStepsPerDay <- aggregate(activityDataNoNAs$steps, by=list(date = activityDataNoNAs$date), FUN=sum)
      hist(totalStepsPerDay$x, right = FALSE, col="royalblue4", main = "Steps Taken Per Day", xlab = "Steps")
 ```
 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
+
 ### Mean steps per day
-```{r echo=TRUE}
+
+```r
      meanStepsPerDay <- mean(totalStepsPerDay$x)
      print(meanStepsPerDay)
 ```
 
+```
+## [1] 10766.19
+```
+
 ### Median steps per day
-```{r echo=TRUE}
+
+```r
      medianStepsPerDay <- median(totalStepsPerDay$x)
      print(meanStepsPerDay)
+```
+
+```
+## [1] 10766.19
 ```
 
 ## After removing rows with missing data, what is the average daily activity pattern?
 
 ### Create a plot showing mean steps per interval:
-```{r echo=TRUE}
+
+```r
      averageStepsPerInterval <- aggregate(activityDataNoNAs$steps, by=list(interval = activityDataNoNAs$interval), FUN=mean)
      names(averageStepsPerInterval) <- c("interval","meanSteps")
      plot(averageStepsPerInterval$interval,averageStepsPerInterval$meanSteps, type ="l", col="royalblue4",
           main = "Average Steps Per Interval", xlab = "5 Minute Interval", ylab = "Average Steps Taken")
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png)
+
 ### Interval with the highest average steps
-```{r echo=TRUE}
+
+```r
      averageStepsPerInterval <- averageStepsPerInterval[with(averageStepsPerInterval, order(-meanSteps)),]
      intervalMax <- averageStepsPerInterval[1,1]
      print(intervalMax)
 ```
 
+```
+## [1] 835
+```
+
 ## Imputing missing values
 
 ### Total observations missing steps (value = NA)
-```{r echo=TRUE}
+
+```r
      totalMissingValues <- nrow(activityData) - sum(complete.cases(activityData$steps))
      print(totalMissingValues)
 ```
 
+```
+## [1] 2304
+```
+
 ### Create a historgram showing mean steps per day, after NAs were populated using interval means:
-```{r echo=TRUE}
+
+```r
      activityDataFixed <- activityData
      i <- 1
      for (i in 1:nrow(activityDataFixed))
@@ -85,16 +113,28 @@
           main = "Average Total Steps Per Day\nNAs populated using interval means")
 ```
 
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png)
+
 ### Mean steps per day
-```{r echo=TRUE}
+
+```r
      meanStepsPerDayFixed <- mean(totalStepsPerDayFixed$x)
      print(meanStepsPerDayFixed)
 ```
 
+```
+## [1] 10766.19
+```
+
 ### Median steps per day
-```{r echo=TRUE}
+
+```r
      medianStepsPerDayFixed <- median(totalStepsPerDayFixed$x)
      print(medianStepsPerDayFixed)
+```
+
+```
+## [1] 10766.19
 ```
 
 Note that after fixing the rows with missing values (populating NAs with interval averages), the mean did not change, but the median did (median now equals mean).
@@ -102,7 +142,8 @@ Note that after fixing the rows with missing values (populating NAs with interva
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ### Create a plot showing mean steps per interval, comparring weekend behavior vs weekday:
-```{r echo=TRUE}
+
+```r
      ##Create a new variable showing weekday vs weekend
      weekendDays <- c("Saturday","Sunday")
      activityWeekday <- as.factor(weekdays(as.Date(activityDataFixed[,1],format = "%Y/%m/%d"))) ## Creates a vector of weekdays
@@ -126,5 +167,7 @@ Note that after fixing the rows with missing values (populating NAs with interva
      xyplot(steps ~ interval | weekend, data = tidyWeekendComparrisonSet, layout = c(1,2),
             type = "l", xlab = "Interval", ylab = "Number of steps")
 ```
+
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png)
 
 From this plot, one might conclude that the subject is generally more active during the weekends, but has a slower start during the mornings.
