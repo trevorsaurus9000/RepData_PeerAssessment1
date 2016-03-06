@@ -111,7 +111,7 @@ Note that after fixing the rows with missing values (populating NAs with interva
 
 Plot showing mean steps per interval, comparring weekend behavior vs weekday:
 ```{r echo=TRUE}
-          ##Create a new variable showing weekday vs weekend
+     ##Create a new variable showing weekday vs weekend
      weekendDays <- c("Saturday","Sunday")
      activityWeekday <- as.factor(weekdays(as.Date(activityDataFixed[,1],format = "%m/%d/%Y"))) ## Creates a vector of weekdays
      weekend <- activityWeekday %in% weekendDays  ## TRUE if the weekday was Saturday or Sunday
